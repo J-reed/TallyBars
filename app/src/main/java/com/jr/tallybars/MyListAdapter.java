@@ -3,7 +3,6 @@ package com.jr.tallybars;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +51,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
             super(itemView);
             this.drawShapeView = (DrawShapeView) itemView.findViewById(R.id.drawShapeView);
             this.textView = (TextView) itemView.findViewById(R.id.textView);
-            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relativeLayout);
+            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.listItems);
         }
     }
 }

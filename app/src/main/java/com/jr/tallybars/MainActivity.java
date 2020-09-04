@@ -35,8 +35,14 @@ public class MainActivity extends AppCompatActivity {
                 new MyListData("Music Pieces", black),
                 new MyListData("Duolingo", black),
                 new MyListData("LingoDeer", black),
-                new MyListData("test1", black),
-                new MyListData("test2", black)
+                new MyListData("test1", garb),
+                new MyListData("test2", black),
+                new MyListData("test3", black),
+                new MyListData("test4", black),
+                new MyListData("test5", Color.BLUE),
+                new MyListData("test6", black),
+                new MyListData("test7", black),
+                new MyListData("test8", black)
         };
 
     }

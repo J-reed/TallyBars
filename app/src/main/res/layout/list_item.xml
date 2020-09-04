@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout"
+    android:id="@+id/listItems"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeightLarge"
     android:background="@drawable/border">
@@ -18,6 +19,7 @@
         android:layout_toEndOf="@id/drawShapeView"
         android:layout_toRightOf="@id/drawShapeView"
         android:gravity="center_vertical"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
 </RelativeLayout>
+
