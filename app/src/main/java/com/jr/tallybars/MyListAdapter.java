@@ -29,7 +29,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         final MyListData myListData = this.listdata[position];
         holder.textView.setText(this.listdata[position].getDescription());
-        //holder.imageView.setImageResource(this.listdata[position].getImgId());
+        holder.drawShapeView.setColour(this.listdata[position].getColour());
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

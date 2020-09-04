@@ -9,6 +9,7 @@ import android.view.View;
 
 public class DrawShapeView extends View {
     private Paint paint;
+    private int colour = Color.BLACK;
 
     public DrawShapeView(Context context) {
         super(context);
@@ -28,9 +29,13 @@ public class DrawShapeView extends View {
     private void init(Context context) {
         // create the Paint and set its color
         paint = new Paint();
-        paint.setColor(Color.GRAY);
+        paint.setColor(this.colour);
     }
 
+    public void setColour(int colour){
+        this.colour = colour;
+        paint.setColor(this.colour);
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {

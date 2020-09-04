@@ -3,11 +3,11 @@ package com.jr.tallybars;
 public class MyListData {
 
     private String description;
-    private int imgId;
+    private int colour;
 
-    public MyListData(String description, int imgId) {
+    public MyListData(String description, int colour) {
         this.description = description;
-        this.imgId = imgId;
+        this.colour = colour;
     }
     public String getDescription() {
         return description;
@@ -15,10 +15,10 @@ public class MyListData {
     public void setDescription(String description) {
         this.description = description;
     }
-    public int getImgId() {
-        return imgId;
+    public int getColour() {
+        return colour;
     }
-    public void setImgId(int imgId) {
-        this.imgId = imgId;
+    public void setColour(int colour) {
+        this.colour = colour;
     }
 }
