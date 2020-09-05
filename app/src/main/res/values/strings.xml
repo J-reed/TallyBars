@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Tally Bars</string>
+
+    <string name="group_add_button">Press this button to add a new group!</string>
+
+    <string name="new_group_name"> <u>New Group Name</u></string>
+    <string name="group_name_hint">Group Name</string>
+    <string name="colour_picker_button">Colour</string>
+    <string name="group_ok_button">Ok</string>
+
+    <string name="R">R</string>
+    <string name="G">G</string>
+    <string name="B">B</string>
 </resources>

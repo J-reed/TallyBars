@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#F1ECDA">
+
+    <view
+        android:id="@+id/drawShapeCircle"
+        class="com.jr.tallybars.DrawShapeView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/enterGroupNameTextBox"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="240dp"
+        android:layout_marginLeft="240dp"
+        android:layout_marginTop="-2dp"
+        android:layout_toRightOf="@id/rSeekBar"
+        android:layout_toEndOf="@id/rSeekBar" />
+
+    <TextView
+        android:id="@+id/newGroupNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/new_group_name"
+        android:textColor="#6C6C6C"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/enterGroupNameTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newGroupNameText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="-20dp"
+        android:ems="10"
+        android:hint="@string/group_name_hint"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/popupOkButton"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="243dp"
+        android:layout_marginLeft="243dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/group_ok_button" />
+
+    <TextView
+        android:id="@+id/rText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/enterGroupNameTextBox"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/R" />
+
+    <TextView
+        android:id="@+id/gText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/G" />
+
+    <TextView
+        android:id="@+id/bText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/B" />
+
+    <SeekBar
+        android:id="@+id/rSeekBar"
+        style="@style/Widget.AppCompat.SeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/enterGroupNameTextBox"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/rText"
+        android:layout_toRightOf="@id/rText"
+        android:indeterminate="false"
+        android:max="255"
+        android:progress="0" />
+
+    <SeekBar
+        android:id="@+id/bSeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gSeekBar"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/bText"
+        android:layout_toRightOf="@id/bText"
+        android:max="255"
+        android:progress="0" />
+
+    <SeekBar
+        android:id="@+id/gSeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rSeekBar"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_toEndOf="@id/gText"
+        android:layout_toRightOf="@id/gText"
+        android:max="255"
+        android:progress="0" />
+
+</RelativeLayout>

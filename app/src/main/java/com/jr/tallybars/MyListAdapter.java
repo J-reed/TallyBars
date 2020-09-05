@@ -27,8 +27,10 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final MyListData myListData = this.listdata[position];
-        holder.textView.setText(this.listdata[position].getDescription());
-        holder.drawShapeView.setColour(this.listdata[position].getColour());
+        holder.textView.setText(myListData.getDescription());
+        holder.drawShapeView.setColour(myListData.getColour());
+        holder.drawShapeView.setPos(myListData.getX(), myListData.getY(), myListData.getRad());
+        holder.drawShapeView.setBackgroundColour(myListData.getBackgroundColour());
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
