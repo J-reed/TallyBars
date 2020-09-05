@@ -47,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Show a popup view
 
-
-
                 LayoutInflater inflater = (LayoutInflater)
                         getSystemService(LAYOUT_INFLATER_SERVICE);
                 final View popupView = inflater.inflate(R.layout.group_add_popup, null);
@@ -73,90 +71,61 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                // Position the circle drawing nicely in the canvas
                 final DrawShapeView displayColour = (DrawShapeView) popupView.findViewById(R.id.drawShapeCircle);
                 displayColour.setBackgroundColour(Color.rgb(241,236,218));
                 displayColour.setPos(60,80,50);
 
+                // Setup SeekBar Listeners
                 SeekBar rSeekBar = (SeekBar) popupView.findViewById(R.id.rSeekBar);
-                rSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        int current_colour = displayColour.getColor();
-                        displayColour.setColour(Color.rgb(i, Color.green(current_colour), Color.blue(current_colour)));
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
+                setupSeekBarListener(rSeekBar, displayColour, 0);
 
                 SeekBar gSeekBar = (SeekBar) popupView.findViewById(R.id.gSeekBar);
-                gSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        int current_colour = displayColour.getColor();
-                        displayColour.setColour(Color.rgb(Color.red(current_colour), i, Color.blue(current_colour)));
-                    }
+                setupSeekBarListener(gSeekBar, displayColour, 1);
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
                 SeekBar bSeekBar = (SeekBar) popupView.findViewById(R.id.bSeekBar);
-                bSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        int current_colour = displayColour.getColor();
-                        displayColour.setColour(Color.rgb(Color.red(current_colour), Color.green(current_colour), i));
-                    }
+                setupSeekBarListener(bSeekBar, displayColour, 2);
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
+                //Handle the Ok button
 
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                });
             }
         });
 
+    }
 
+    private void setupSeekBarListener(SeekBar bar, final DrawShapeView displayColour, final int index){
 
+        bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
+                int current_colour = displayColour.getColor();
 
+                int new_colour;
+                switch (index){
+                    case 0:
+                        new_colour = Color.rgb(i,Color.green(current_colour), Color.blue(current_colour));
+                        break;
+                    case 1:
+                        new_colour = Color.rgb(Color.red(current_colour),i, Color.blue(current_colour));
+                        break;
+                    case 2:
+                        new_colour = Color.rgb(Color.red(current_colour), Color.green(current_colour), i);
+                        break;
+                    default:
+                        new_colour = current_colour;
+                }
 
-//        Button popupOkButton = (Button) findViewById(R.id.popupOkButton);
-//        popupOkButton.setOnClickListener(new Button.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                String newGroupName = ((EditText) findViewById(R.id.enterGroupNameTextBox)).getText().toString();
-//
-//                int r = Integer.parseInt(((EditText) findViewById(R.id.rNumberEditText)).getText().toString());
-//                int g = Integer.parseInt(((EditText) findViewById(R.id.gNumberEditText)).getText().toString());
-//                int b = Integer.parseInt(((EditText) findViewById(R.id.bNumberEditText)).getText().toString());
-//
-//                int colour = Color.rgb(r,g,b);
-//
-//                MyListData newGroup = new MyListData(newGroupName, colour);
-//            }
-//        });
+                displayColour.setColour(new_colour);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
     }
 
     private MyListData[] setTempListData(){
@@ -171,12 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 new MyListData("LingoDeer", black),
                 new MyListData("test1", garb),
                 new MyListData("test2", black),
-                new MyListData("test3", black),
-                new MyListData("test4", black),
-                new MyListData("test5", Color.BLUE),
-                new MyListData("test6", black),
-                new MyListData("test7", black),
-                new MyListData("test8", black)
+                new MyListData("test3", Color.BLUE),
+
         };
 
     }
