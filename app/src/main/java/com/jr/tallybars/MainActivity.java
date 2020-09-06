@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,18 +23,25 @@ import android.widget.SeekBar;
 
 public class MainActivity extends AppCompatActivity {
 
+    DbHelper db;
+    MyListData[] groups;
+
+    RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MyListData[] myListData = setTempListData();
+        this.db = new DbHelper(this.getApplicationContext());
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        MyListAdapter adapter = new MyListAdapter(myListData);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        this.groups = getGroupsFromDatabase();
+
+        this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        MyListAdapter adapter = new MyListAdapter(groups);
+        this.recyclerView.setHasFixedSize(true);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.recyclerView.setAdapter(adapter);
 
         this.handleGroupAddPopup();
 
@@ -77,17 +86,42 @@ public class MainActivity extends AppCompatActivity {
                 displayColour.setPos(60,80,50);
 
                 // Setup SeekBar Listeners
-                SeekBar rSeekBar = (SeekBar) popupView.findViewById(R.id.rSeekBar);
+                final SeekBar rSeekBar = (SeekBar) popupView.findViewById(R.id.rSeekBar);
                 setupSeekBarListener(rSeekBar, displayColour, 0);
 
-                SeekBar gSeekBar = (SeekBar) popupView.findViewById(R.id.gSeekBar);
+                final SeekBar gSeekBar = (SeekBar) popupView.findViewById(R.id.gSeekBar);
                 setupSeekBarListener(gSeekBar, displayColour, 1);
 
-                SeekBar bSeekBar = (SeekBar) popupView.findViewById(R.id.bSeekBar);
+                final SeekBar bSeekBar = (SeekBar) popupView.findViewById(R.id.bSeekBar);
                 setupSeekBarListener(bSeekBar, displayColour, 2);
 
                 //Handle the Ok button
+                final EditText enterGroupNameTextBox = (EditText) popupView.findViewById(R.id.enterGroupNameTextBox);
+                final Button popupOkButton = (Button) popupView.findViewById(R.id.popupOkButton);
+                popupOkButton.setOnClickListener(new Button.OnClickListener(){
 
+                    @Override
+                    public void onClick(View view) {
+
+                        String new_group_name = enterGroupNameTextBox.getText().toString().trim();
+                        int new_color = Color.rgb(rSeekBar.getProgress(), gSeekBar.getProgress(), bSeekBar.getProgress());
+
+                        if(!new_group_name.isEmpty()){
+                            db.insertGroup(new_group_name, new_color);
+                            groups = getGroupsFromDatabase();
+                            MyListAdapter adapter = new MyListAdapter(groups);
+                            recyclerView.setAdapter(adapter);
+                            recyclerView.invalidate();
+                            popupWindow.dismiss();
+                            popupView.performClick();
+                        }
+                        else{
+                            enterGroupNameTextBox.setError("Please enter a group name!");
+                        }
+
+
+                    }
+                });
             }
         });
 
@@ -144,5 +178,27 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
+    }
+
+    private MyListData[] getGroupsFromDatabase(){
+
+        Cursor res = this.db.getGroups();
+        MyListData[] myListData = new MyListData[res.getCount()];
+
+        int groupNameColumnIndex = res.getColumnIndex("Groupname");
+        int groupColourColumnIndex = res.getColumnIndex("Colour");
+
+        res.moveToFirst();
+        for(int i = 0; i < res.getCount(); i++){
+
+            String groupName = res.getString(groupNameColumnIndex);
+            int colour = res.getInt(groupColourColumnIndex);
+
+            myListData[i] = new MyListData(groupName, colour);
+
+            res.moveToNext();
+        }
+
+        return myListData;
     }
 }
