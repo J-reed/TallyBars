@@ -1,13 +1,18 @@
 package com.jr.tallybars;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import android.graphics.Color;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,14 +25,21 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
 
     DbHelper db;
-    MyListData[] groups;
+    //MyListData[] groups;
+    ArrayList<MyListData> groups;
+    MyListAdapter adapter;
 
     RecyclerView recyclerView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +50,78 @@ public class MainActivity extends AppCompatActivity {
         this.groups = getGroupsFromDatabase();
 
         this.recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        MyListAdapter adapter = new MyListAdapter(groups);
+        this.adapter = new MyListAdapter(groups);
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        this.recyclerView.setAdapter(adapter);
+        this.recyclerView.setAdapter(this.adapter);
 
+        this.handleSwipeToDelete();
         this.handleGroupAddPopup();
 
     }
+
+
+    private void handleSwipeToDelete(){
+
+
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            boolean delete_db_group = true;
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+
+
+                if(direction == ItemTouchHelper.LEFT){
+
+                    // backup of removed item for undo purpose
+                    final MyListData deletedItem = adapter.get_item(viewHolder.getAdapterPosition());
+                    final int deletedIndex = viewHolder.getAdapterPosition();
+                    // get the removed item name to display it in snack bar
+                    final String name = deletedItem.getDescription();
+                    final int colour = deletedItem.getColour();
+                    // remove the item from recycler view
+                    adapter.remove_data_item(viewHolder.getAdapterPosition());
+
+                    final int actual_index = db.deleteGroup(deletedIndex);
+
+                    // showing snack bar with Undo option
+                    final Snackbar snackbar = Snackbar
+                            .make(viewHolder.itemView, name + " Deleted", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            // undo is selected, restore the deleted item
+                            db.restoreDeletedItem(name, colour, actual_index);
+                            adapter.restore_item(deletedItem, deletedIndex);
+
+                        }
+                    });
+
+                    snackbar.setDuration(4000);
+                    snackbar.setActionTextColor(Color.YELLOW);
+                    snackbar.show();
+
+                }
+
+            }
+
+        };
+
+
+
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+
+    }
+
+
 
     private void handleGroupAddPopup(){
 
@@ -109,9 +185,8 @@ public class MainActivity extends AppCompatActivity {
                         if(!new_group_name.isEmpty()){
                             db.insertGroup(new_group_name, new_color);
                             groups = getGroupsFromDatabase();
-                            MyListAdapter adapter = new MyListAdapter(groups);
-                            recyclerView.setAdapter(adapter);
-                            recyclerView.invalidate();
+                            adapter.add_data_item(new MyListData(new_group_name, new_color));
+
                             popupWindow.dismiss();
                             popupView.performClick();
                         }
@@ -180,21 +255,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private MyListData[] getGroupsFromDatabase(){
+    private ArrayList<MyListData> getGroupsFromDatabase(){
 
         Cursor res = this.db.getGroups();
-        MyListData[] myListData = new MyListData[res.getCount()];
+        ArrayList<MyListData> myListData = new ArrayList<>();
 
+        int idIndex = res.getColumnIndex("id");
         int groupNameColumnIndex = res.getColumnIndex("Groupname");
         int groupColourColumnIndex = res.getColumnIndex("Colour");
 
         res.moveToFirst();
         for(int i = 0; i < res.getCount(); i++){
 
+
             String groupName = res.getString(groupNameColumnIndex);
             int colour = res.getInt(groupColourColumnIndex);
 
-            myListData[i] = new MyListData(groupName, colour);
+            System.out.println(res.getInt(idIndex));
+            System.out.println(groupName);
+            System.out.println(colour);
+
+            myListData.add(new MyListData(groupName, colour));
 
             res.moveToNext();
         }

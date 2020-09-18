@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 
+import java.util.ArrayList;
+
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String DbName = "TallyBarsDB";
@@ -15,15 +17,15 @@ public class DbHelper extends SQLiteOpenHelper {
     public DbHelper(Context context){
         super(context, DbName, null, 1);
 
-       // this.addTestGroups();
+       //this.addTestGroups();
 
     }
 
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Groups(id INTEGER PRIMARY KEY, Groupname VARCHAR, Colour INTEGER);");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Items(id INTEGER PRIMARY KEY, groupId INTEGER, Itemname VARCHAR, Tally INTEGER, FOREIGN KEY(groupId) REFERENCES Groups(id));");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Groups(id INTEGER PRIMARY KEY AUTOINCREMENT, Groupname VARCHAR, Colour INTEGER);");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Items(id INTEGER PRIMARY KEY AUTOINCREMENT, groupId INTEGER, Itemname VARCHAR, Tally INTEGER, FOREIGN KEY(groupId) REFERENCES Groups(id));");
     }
 
     @Override
@@ -49,6 +51,19 @@ public class DbHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean restoreDeletedItem(String group_name, int colour, int position){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues content_values = new ContentValues();
+
+        content_values.put("id", position);
+        content_values.put("Groupname", group_name);
+        content_values.put("Colour", colour);
+
+        sqLiteDatabase.insert("Groups", null, content_values);
+
+        return true;
+    }
+
     public boolean insertItemToGroup(int group_id, String item_name){
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -63,14 +78,22 @@ public class DbHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean deleteGroup(int group_id){
+    public int deleteGroup(int displayed_list_index){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
-        String[] args = {Integer.toString(group_id)};
+        Cursor q = getGroups();
+        q.moveToFirst();
+        q.move(displayed_list_index);
 
+        int idIndex = q.getColumnIndex("id");
+
+        int id = q.getInt(idIndex);
+        String[] args = {Integer.toString(id)};
         sqLiteDatabase.delete("Groups", "id=?", args);
-        return true;
+        return id;
     }
+
+
 
     public boolean deleteGroupItem(int item_id, int group_id){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -78,6 +101,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String[] args = {Integer.toString(item_id), Integer.toString(group_id)};
 
         sqLiteDatabase.delete("Items", "id=? AND groupId=?", args);
+
         return true;
     }
 
@@ -87,9 +111,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
-        String[] columns = {"Groupname", "Colour"};
+        String[] columns = {"id","Groupname", "Colour"};
 
-        return sqLiteDatabase.query("Groups", columns, null, null, null, null,null,null);
+        return sqLiteDatabase.query("Groups", columns, null, null, null, null,"id",null);
     }
 
     public Cursor getGroupItems(int group_id){
