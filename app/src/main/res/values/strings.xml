@@ -8,7 +8,16 @@
     <string name="colour_picker_button">Colour</string>
     <string name="group_ok_button">Ok</string>
 
+    <string name="new_item_name"> <u>New Item Name</u></string>
+    <string name="item_add_button">Press this button to add a new item!</string>
+    <string name="item_name_hint">Item Name</string>
+
     <string name="R">R</string>
     <string name="G">G</string>
     <string name="B">B</string>
+
+
+    <string name="toggle_button_total">To Total</string>
+    <string name="toggle_button_balanced">To Balanced</string>
+
 </resources>

@@ -8,16 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.os.Bundle;
 
 import android.graphics.Color;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -36,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     //MyListData[] groups;
     ArrayList<MyListData> groups;
     MyListAdapter adapter;
-
     RecyclerView recyclerView;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -44,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.getSupportActionBar().setTitle("TallyBars");
 
         this.db = new DbHelper(this.getApplicationContext());
 
@@ -57,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.handleSwipeToDelete();
         this.handleGroupAddPopup();
+
 
     }
 
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             // undo is selected, restore the deleted item
-                            db.restoreDeletedItem(name, colour, actual_index);
+                            db.restoreDeletedGroup(name, colour, actual_index);
                             adapter.restore_item(deletedItem, deletedIndex);
 
                         }
@@ -184,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if(!new_group_name.isEmpty()){
                             db.insertGroup(new_group_name, new_color);
-                            groups = getGroupsFromDatabase();
+                            //groups = getGroupsFromDatabase();
                             adapter.add_data_item(new MyListData(new_group_name, new_color));
 
                             popupWindow.dismiss();

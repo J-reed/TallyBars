@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#F1ECDA">
+
+    <TextView
+        android:id="@+id/newItemNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:text="@string/new_item_name"
+        android:textColor="#6C6C6C"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/enterItemNameTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newItemNameText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="-20dp"
+        android:ems="10"
+        android:hint="@string/item_name_hint"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/item_popupOkButton"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/enterItemNameTextBox"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="245dp"
+        android:layout_marginLeft="245dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/group_ok_button" />
+
+</RelativeLayout>

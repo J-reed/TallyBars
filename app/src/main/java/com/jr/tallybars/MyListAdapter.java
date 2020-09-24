@@ -1,5 +1,6 @@
 package com.jr.tallybars;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
+
+
+
 
 import java.util.ArrayList;
 
+
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder>{
     private ArrayList<MyListData> listdata;
-
+    private boolean is_tally_view = false;
+    private BarChartView bView = null;
     // RecyclerView recyclerView;
     public MyListAdapter(ArrayList<MyListData> listdata) {
         this.listdata = listdata;
     }
+    public MyListAdapter(ArrayList<MyListData> listdata, boolean no_click_through, BarChartView view){this.listdata = listdata; this.is_tally_view = true; bView = view;}
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
@@ -32,8 +39,10 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         return viewHolder;
     }
 
+
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final MyListData myListData = this.listdata.get(position);
         holder.textView.setText(myListData.getDescription());
         holder.drawShapeView.setColour(myListData.getColour());
@@ -42,10 +51,28 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(),"click on item: "+myListData.getDescription(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(view.getContext(),"click on item: "+myListData.getDescription(), Toast.LENGTH_LONG).show();
+                if(!is_tally_view) {
+                    Intent intent = new Intent(view.getContext(), BarChartView.class);
+                    intent.putExtra("position", position);
+                    intent.putExtra("group_name", myListData.getDescription());
+                    view.getContext().startActivity(intent);
+                }else{
+                    bView.increment_tally(position);
+                }
             }
         });
 
+        holder.relativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(is_tally_view){
+                    bView.decrement_tally(position);
+                }
+
+                return true;
+            }
+        });
 
     }
 

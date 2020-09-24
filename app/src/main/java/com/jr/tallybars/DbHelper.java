@@ -5,9 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -51,7 +50,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean restoreDeletedItem(String group_name, int colour, int position){
+    public boolean restoreDeletedGroup(String group_name, int colour, int position){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues content_values = new ContentValues();
 
@@ -60,6 +59,20 @@ public class DbHelper extends SQLiteOpenHelper {
         content_values.put("Colour", colour);
 
         sqLiteDatabase.insert("Groups", null, content_values);
+
+        return true;
+    }
+
+    public boolean restoreDeletedItem(String item_name, int group_id, int tally, int position){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues content_values = new ContentValues();
+
+        content_values.put("id", position);
+        content_values.put("groupId", group_id);
+        content_values.put("Itemname", item_name);
+        content_values.put("Tally", tally);
+
+        sqLiteDatabase.insert("Items", null, content_values);
 
         return true;
     }
@@ -81,28 +94,45 @@ public class DbHelper extends SQLiteOpenHelper {
     public int deleteGroup(int displayed_list_index){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
+
+        int id = getGroupIdFromDisplayedIndex(displayed_list_index);
+
+        String[] args = {Integer.toString(id)};
+        sqLiteDatabase.delete("Items", "groupId=?",args);
+        sqLiteDatabase.delete("Groups", "id=?", args);
+        return id;
+    }
+
+    public int getGroupIdFromDisplayedIndex(int displayed_list_index){
+
         Cursor q = getGroups();
         q.moveToFirst();
         q.move(displayed_list_index);
 
         int idIndex = q.getColumnIndex("id");
-
-        int id = q.getInt(idIndex);
-        String[] args = {Integer.toString(id)};
-        sqLiteDatabase.delete("Groups", "id=?", args);
-        return id;
+        return q.getInt(idIndex);
     }
 
+    public int getGroupItemIdFromDisplayedIndex(int group_id, int displayed_list_index){
 
+        Cursor q = getGroupItems(group_id);
+        q.moveToFirst();
+        q.move(displayed_list_index);
 
-    public boolean deleteGroupItem(int item_id, int group_id){
+        int idIndex = q.getColumnIndex("id");
+        return q.getInt(idIndex);
+    }
+
+    public int deleteGroupItem(int item_id, int group_id){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
-        String[] args = {Integer.toString(item_id), Integer.toString(group_id)};
+
+        int id = getGroupItemIdFromDisplayedIndex(group_id, item_id);
+        String[] args = {Integer.toString(id), Integer.toString(group_id)};
 
         sqLiteDatabase.delete("Items", "id=? AND groupId=?", args);
 
-        return true;
+        return id;
     }
 
     //Data retrieval functions
@@ -120,10 +150,36 @@ public class DbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
-        String[] columns = {"Itemname"," Tally"};
+        String[] columns = {"id", "Itemname"," Tally"};
         String[] args = {Integer.toString(group_id)};
 
         return sqLiteDatabase.query("Items", columns, "groupId=?", args, null,null,null,null);
+    }
+
+    public HashMap<String, Integer> getGroupItemsInUsefulForm(int group_id){
+
+        HashMap<String, Integer> h = new HashMap<>();
+        Cursor q = this.getGroupItems(group_id);
+
+        q.moveToFirst();
+        for(int i = 0; i < q.getCount(); i++){
+            h.put(q.getString(q.getColumnIndex("Itemname")), q.getInt(q.getColumnIndex("Tally")));
+            q.moveToNext();
+        }
+
+        return h;
+    }
+
+
+    public void setItemTally(int group_id, int item_id, int tally){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Tally", tally);
+
+        int id = getGroupItemIdFromDisplayedIndex(group_id, item_id);
+        String[] args = {Integer.toString(group_id), Integer.toString(id)};
+        sqLiteDatabase.update("Items", contentValues, "groupId=? AND id=?", args);
     }
 
     //Test data function
