@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.HashMap;
 
+import static android.database.DatabaseUtils.dumpCursorToString;
+
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String DbName = "TallyBarsDB";
@@ -146,7 +148,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.query("Groups", columns, null, null, null, null,"id",null);
     }
 
-    public Cursor getGroupItems(int group_id){
+    public synchronized Cursor getGroupItems(int group_id){
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
@@ -171,34 +173,14 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
 
-    public void setItemTally(int group_id, int item_id, int tally){
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("Tally", tally);
-
-        int id = getGroupItemIdFromDisplayedIndex(group_id, item_id);
-        String[] args = {Integer.toString(group_id), Integer.toString(id)};
-        sqLiteDatabase.update("Items", contentValues, "groupId=? AND id=?", args);
-    }
 
     //Test data function
-
+/*
     private void addTestGroups(){
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         this.onUpgrade(sqLiteDatabase, 0,0);
 
-//        int black = Color.rgb(0,0,0);
-//        int garb = Color.rgb(147,202,95);
-//
-//        insertGroup("Music Scales", garb);
-//        insertGroup("Music Pieces", black);
-//        insertGroup("Duolingo", black);
-//        insertGroup("LingoDeer", Color.BLUE);
-//        insertGroup("test1", Color.BLUE);
-//        insertGroup("test2", Color.BLUE);
-
     }
-
+*/
 }

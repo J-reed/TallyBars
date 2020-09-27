@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
 
-            boolean delete_db_group = true;
+
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
@@ -236,23 +236,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private MyListData[] setTempListData(){
-
-        int black = Color.rgb(0,0,0);
-        int garb = Color.rgb(147,202,95);
-
-        return new MyListData[] {
-                new MyListData("Music Scales", garb),
-                new MyListData("Music Pieces", black),
-                new MyListData("Duolingo", black),
-                new MyListData("LingoDeer", black),
-                new MyListData("test1", garb),
-                new MyListData("test2", black),
-                new MyListData("test3", Color.BLUE),
-
-        };
-
-    }
 
     private ArrayList<MyListData> getGroupsFromDatabase(){
 

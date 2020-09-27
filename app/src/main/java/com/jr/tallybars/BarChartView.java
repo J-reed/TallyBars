@@ -6,8 +6,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,11 +20,10 @@ import android.widget.PopupWindow;
 import android.widget.ToggleButton;
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -45,9 +42,6 @@ public class BarChartView extends AppCompatActivity {
     private DbHelper db;
     private MyListAdapter adapter;
 
-    private ArrayList<BarEntry> entries;
-    private ArrayList<String> labels;
-    private ArrayList<Integer> values;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +87,6 @@ public class BarChartView extends AppCompatActivity {
         this.toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(toggleButton.getText());
-                System.out.println(toggleButton.isSelected());
                 toggleButton.setSelected(!toggleButton.isSelected());
                 drawbars();
             }
@@ -104,83 +96,14 @@ public class BarChartView extends AppCompatActivity {
 
     public void increment_tally(int list_position){
 
-
-
-        int value = values.get(list_position) + 1;
-        db.setItemTally(group_id, list_position, (int)value);
-        this.items = db.getGroupItemsInUsefulForm(this.group_id);
-
-        drawbars();
-
     }
 
     public void decrement_tally(int list_position){
-
-        int value = values.get(list_position) - 1;
-        db.setItemTally(group_id, list_position, (int)value);
-        this.items = db.getGroupItemsInUsefulForm(this.group_id);
-
-        drawbars();
 
 
     }
 
     private void drawbars(){
-
-        entries = new ArrayList<>();
-        labels = new ArrayList<>();
-        values = new ArrayList<>();
-        //Total
-        if(this.toggleButton.isSelected()){
-            System.out.println("TOTAL");
-            int i = 0;
-            for (String s : this.items.keySet()){
-                labels.add(s);
-
-                int val = this.items.get(s);
-                values.add(val);
-                entries.add(new BarEntry((float)val, i));
-                i++;
-            }
-        }
-        //Balanced
-        else{
-            System.out.println("BALANCED");
-
-            int minimum = 0;
-
-            int j = 0;
-            for (String s : this.items.keySet()){
-
-                labels.add(s);
-                int val = this.items.get(s);
-
-                if(j == 0) {
-                    minimum = val;
-                }
-
-                if(val < minimum){
-                    minimum = val;
-                }
-
-                values.add(val);
-                j++;
-            }
-
-            for (int i = 0; i < values.size(); i++){
-                entries.add(new BarEntry((float)(values.get(i)-minimum), i));
-            }
-
-        }
-
-        BarDataSet bardataset = new BarDataSet(entries, "Cells");
-        BarData data = new BarData(labels, bardataset);
-
-        barChart.setData(data); // set the data and list of labels into chart
-        barChart.setDescription("");
-        bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
-        barChart.notifyDataSetChanged();
-        barChart.animateY(1);
 
     }
 
@@ -262,7 +185,7 @@ public class BarChartView extends AppCompatActivity {
                 return false;
             }
 
-            boolean delete_db_group = true;
+
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
