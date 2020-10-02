@@ -125,6 +125,54 @@ public class DbHelper extends SQLiteOpenHelper {
         return q.getInt(idIndex);
     }
 
+    public int getMinTallyItemValueFromGroup(int group_id){
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        String[] args = {Integer.toString(group_id)};
+        Cursor q = sqLiteDatabase.rawQuery("SELECT MIN(Tally) AS Tally FROM Items WHERE groupId=?;", args);
+        q.moveToFirst();
+        int min_tally_ID = q.getColumnIndex("Tally");
+
+        return q.getInt(min_tally_ID);
+    }
+
+    public int getGroupItemTallyValueFromDisplayedIndex(int group_id, int displayed_list_index){
+        Cursor q = getGroupItems(group_id);
+        q.moveToFirst();
+        q.move(displayed_list_index);
+
+        int tallyIndex = q.getColumnIndex("Tally");
+        return q.getInt(tallyIndex);
+    }
+
+    public void setGroupItemTally(int group_id, int displayed_list_index, int tally_value){
+
+        Cursor q = getGroupItems(group_id);
+        q.moveToFirst();
+        q.move(displayed_list_index);
+
+        int idIndex = q.getColumnIndex("id");
+        int item_nameIndex = q.getColumnIndex("Itemname");
+
+        int id = q.getInt(idIndex);
+        String item_name = q.getString(item_nameIndex);
+
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        ContentValues content_values = new ContentValues();
+
+        content_values.put("id", id);
+        content_values.put("groupId", group_id);
+        content_values.put("Itemname", item_name);
+        content_values.put("Tally", tally_value);
+
+        String[] args = {Integer.toString(id), Integer.toString(group_id)};
+        sqLiteDatabase.update("Items",content_values, "id=? AND groupId=?", args);
+
+    }
+
     public int deleteGroupItem(int item_id, int group_id){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
@@ -158,7 +206,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.query("Items", columns, "groupId=?", args, null,null,null,null);
     }
 
-    public HashMap<String, Integer> getGroupItemsInUsefulForm(int group_id){
+    public HashMap<String, Integer> groupItemsToHashmap(int group_id){
 
         HashMap<String, Integer> h = new HashMap<>();
         Cursor q = this.getGroupItems(group_id);

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -23,7 +24,6 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -60,13 +60,14 @@ public class BarChartView extends AppCompatActivity {
 
         this.barChart.getAxisLeft().setAxisMinValue(0);
         this.barChart.getAxisRight().setAxisMinValue(0);
+        this.barChart.setAutoScaleMinMaxEnabled(true);
 
         this.db = new DbHelper(this.getApplicationContext());
 
 
 
         this.group_id = db.getGroupIdFromDisplayedIndex(position);
-        this.items = db.getGroupItemsInUsefulForm(this.group_id);
+        this.items = db.groupItemsToHashmap(this.group_id);
 
         ArrayList<MyListData> items_mylistdata = new ArrayList<>();
         for(String s : this.items.keySet()){
@@ -95,16 +96,63 @@ public class BarChartView extends AppCompatActivity {
     }
 
     public void increment_tally(int list_position){
+        // Get value from database
+        int tally_value = db.getGroupItemTallyValueFromDisplayedIndex(group_id, list_position);
+        // Add 1
+        tally_value += 1;
+        // Store value in database
+        db.setGroupItemTally(group_id, list_position, tally_value);
 
+        drawbars();
     }
 
     public void decrement_tally(int list_position){
+        int tally_value = db.getGroupItemTallyValueFromDisplayedIndex(group_id, list_position);
+        // Subtract 1
+        tally_value -= 1;
+        // Store value in database
+        db.setGroupItemTally(group_id, list_position, tally_value);
 
-
+        drawbars();
     }
 
     private void drawbars(){
 
+
+
+        ArrayList<String> labels = new ArrayList<>();
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        BarDataSet barDataSet = new BarDataSet(barEntries, "");
+
+        BarData barData = new BarData(labels, barDataSet);
+        barChart.setData(barData);
+        barChart.setDescription("");
+
+        barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        barDataSet.setValueTextColor(Color.BLACK);
+        barDataSet.setValueTextSize(18f);
+
+        // Read values from database
+        Cursor c = db.getGroupItems(group_id);
+        c.moveToFirst();
+
+        // Draw Chart from scratch
+
+        for (int i = 0; i < c.getCount(); i++) {
+            int itemname_col = c.getColumnIndex("Itemname");
+            int tally_col = c.getColumnIndex("Tally");
+
+
+            float db_tally_value = c.getInt(tally_col);
+            float tally_value = toggleButton.isSelected() ? db_tally_value : db_tally_value - db.getMinTallyItemValueFromGroup(group_id);
+
+            barEntries.add(new BarEntry(tally_value,i));
+            labels.add(c.getString(itemname_col));
+            c.moveToNext();
+        }
+
+        barChart.notifyDataSetChanged();
+        barChart.postInvalidate();
     }
 
 
@@ -156,7 +204,7 @@ public class BarChartView extends AppCompatActivity {
                             db.insertItemToGroup(group_id, new_item_name);
                             adapter.add_data_item(new MyListData(new_item_name, 0,0,0,0,0));
 
-                            items = db.getGroupItemsInUsefulForm(group_id);
+                            items = db.groupItemsToHashmap(group_id);
                             drawbars();
 
                             popupWindow.dismiss();
@@ -202,6 +250,7 @@ public class BarChartView extends AppCompatActivity {
                     final int tally = items.get(name);
                     // remove the item from recycler view
                     adapter.remove_data_item(viewHolder.getAdapterPosition());
+                    adapter.notifyDataSetChanged();
 
                     final int actual_index = db.deleteGroupItem(deletedIndex, group_id);
 
@@ -213,14 +262,16 @@ public class BarChartView extends AppCompatActivity {
                         public void onClick(View view) {
                             // undo is selected, restore the deleted item
                             db.restoreDeletedItem(name, group_id, tally, actual_index);
-                            items = db.getGroupItemsInUsefulForm(group_id);
+                            items = db.groupItemsToHashmap(group_id);
                             adapter.restore_item(deletedItem, deletedIndex);
+                            adapter.notifyDataSetChanged();
                             drawbars();
                         }
                     });
 
-                    items = db.getGroupItemsInUsefulForm(group_id);
+                    items = db.groupItemsToHashmap(group_id);
                     drawbars();
+
 
                     snackbar.setDuration(4000);
                     snackbar.setActionTextColor(Color.YELLOW);

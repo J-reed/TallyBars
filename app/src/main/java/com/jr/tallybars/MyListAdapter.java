@@ -38,6 +38,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final MyListData myListData = this.listdata.get(position);
+
         holder.textView.setText(myListData.getDescription());
         holder.drawShapeView.setColour(myListData.getColour());
         holder.drawShapeView.setPos(myListData.getX(), myListData.getY(), myListData.getRad());
@@ -46,6 +47,7 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
             @Override
             public void onClick(View view) {
                 //Toast.makeText(view.getContext(),"click on item: "+myListData.getDescription(), Toast.LENGTH_LONG).show();
+
                 if(!is_tally_view) {
                     Intent intent = new Intent(view.getContext(), BarChartView.class);
                     intent.putExtra("position", position);
