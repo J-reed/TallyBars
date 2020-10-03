@@ -23,35 +23,41 @@ public class CustomXAxisRenderer extends XAxisRenderer {
 
 
     @Override
+    protected void drawLabels(Canvas c, float pos, PointF anchor) {
+
+        // This solves an internal bug when using a custom label renderer when there are no labels.
+        if(no_letters == -1){
+            mMaxX = -1;
+        }
+
+        super.drawLabels(c,pos,anchor);
+    }
+
+
+    @Override
     protected void drawLabel(Canvas c, String label, int xIndex, float x, float y, PointF anchor, float angleDegrees) {
         String formattedLabel = mXAxis.getValueFormatter().getXValue(label, xIndex, mViewPortHandler);
-        System.out.println(formattedLabel);
 
-        ArrayList<String> label_lines = new ArrayList<>();
+        if(no_letters != -1) {
 
-        int offset = (formattedLabel.length() / no_letters + 1)*30;
+            ArrayList<String> label_lines = new ArrayList<>();
 
-        int i_last = 0;
-        int counter = 0;
-        for(int i = 1; i < formattedLabel.length(); i++){
+            int offset = (formattedLabel.length() / no_letters + 1) * 30;
 
-            if(i%no_letters==0){
-                Utils.drawText(c, formattedLabel.substring(i_last,i), x, y -offset+(30*counter), mAxisLabelPaint, anchor, angleDegrees);
-                i_last = i;
-                counter++;
+            int i_last = 0;
+            int counter = 0;
+            for (int i = 1; i < formattedLabel.length(); i++) {
+
+                if (i % no_letters == 0) {
+                    Utils.drawText(c, formattedLabel.substring(i_last, i), x, y - offset + (30 * counter), mAxisLabelPaint, anchor, angleDegrees);
+                    i_last = i;
+                    counter++;
+                }
+
             }
-
+            Utils.drawText(c, formattedLabel.substring(i_last), x, y - offset + (30 * counter), mAxisLabelPaint, anchor, angleDegrees);
         }
-        Utils.drawText(c, formattedLabel.substring(i_last), x, y -offset+(30*counter), mAxisLabelPaint, anchor, angleDegrees);
 
 
-//        if(toggleY){
-//            Utils.drawText(c, formattedLabel, x, y, mAxisLabelPaint, anchor, angleDegrees);
-//        }
-//        else{
-//            Utils.drawText(c, formattedLabel, x, y-40, mAxisLabelPaint, anchor, angleDegrees);
-//        }
-//
-//        toggleY = !toggleY;
     }
 }

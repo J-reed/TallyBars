@@ -24,6 +24,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -144,7 +145,11 @@ public class BarChartView extends AppCompatActivity {
 
         // Draw Chart from scratch
 
-        int longest_string_length = 0;
+
+
+
+
+        int longest_string_length = -1;
         for (int i = 0; i < c.getCount(); i++) {
             int itemname_col = c.getColumnIndex("Itemname");
             int tally_col = c.getColumnIndex("Tally");
@@ -164,17 +169,18 @@ public class BarChartView extends AppCompatActivity {
             c.moveToNext();
         }
 
+
         int width_in_chars = 60;
-        int width__in_chars_per_bar = width_in_chars / labels.size();
+        int width__in_chars_per_bar = labels.size() > 0 ? width_in_chars / labels.size() : -1;
 
         float no_lines = (longest_string_length / width__in_chars_per_bar) + 1;
-
-        System.out.println(no_lines);
 
         int offset_mulitplier = 12;
 
         barChart.setExtraTopOffset(no_lines * offset_mulitplier);
         barChart.setXAxisRenderer(new CustomXAxisRenderer(barChart.getViewPortHandler(), barChart.getXAxis(), barChart.getTransformer(barChart.getAxisLeft().getAxisDependency()), width__in_chars_per_bar));
+
+
 
 
         barChart.notifyDataSetChanged();
