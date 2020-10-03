@@ -133,6 +133,7 @@ public class BarChartView extends AppCompatActivity {
         barChart.setData(barData);
         barChart.setDescription("");
 
+
         barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         barDataSet.setValueTextColor(Color.BLACK);
         barDataSet.setValueTextSize(18f);
@@ -143,6 +144,7 @@ public class BarChartView extends AppCompatActivity {
 
         // Draw Chart from scratch
 
+        int longest_string_length = 0;
         for (int i = 0; i < c.getCount(); i++) {
             int itemname_col = c.getColumnIndex("Itemname");
             int tally_col = c.getColumnIndex("Tally");
@@ -152,9 +154,28 @@ public class BarChartView extends AppCompatActivity {
             float tally_value = toggleButton.isSelected() ? db_tally_value : db_tally_value - db.getMinTallyItemValueFromGroup(group_id);
 
             barEntries.add(new BarEntry(tally_value,i));
-            labels.add(c.getString(itemname_col));
+
+            String label_value = c.getString(itemname_col);
+            if(label_value.length() > longest_string_length){
+                longest_string_length = label_value.length();
+            }
+
+            labels.add(label_value);
             c.moveToNext();
         }
+
+        int width_in_chars = 60;
+        int width__in_chars_per_bar = width_in_chars / labels.size();
+
+        float no_lines = (longest_string_length / width__in_chars_per_bar) + 1;
+
+        System.out.println(no_lines);
+
+        int offset_mulitplier = 12;
+
+        barChart.setExtraTopOffset(no_lines * offset_mulitplier);
+        barChart.setXAxisRenderer(new CustomXAxisRenderer(barChart.getViewPortHandler(), barChart.getXAxis(), barChart.getTransformer(barChart.getAxisLeft().getAxisDependency()), width__in_chars_per_bar));
+
 
         barChart.notifyDataSetChanged();
         barChart.postInvalidate();

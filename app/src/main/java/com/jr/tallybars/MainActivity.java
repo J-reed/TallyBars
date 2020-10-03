@@ -253,10 +253,6 @@ public class MainActivity extends AppCompatActivity {
             String groupName = res.getString(groupNameColumnIndex);
             int colour = res.getInt(groupColourColumnIndex);
 
-            System.out.println(res.getInt(idIndex));
-            System.out.println(groupName);
-            System.out.println(colour);
-
             myListData.add(new MyListData(groupName, colour));
 
             res.moveToNext();
