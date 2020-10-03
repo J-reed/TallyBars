@@ -70,8 +70,13 @@ public class BarChartView extends AppCompatActivity {
         this.items = db.groupItemsToHashmap(this.group_id);
 
         ArrayList<MyListData> items_mylistdata = new ArrayList<>();
-        for(String s : this.items.keySet()){
-            items_mylistdata.add(new MyListData(s, 0, 0,0,0,0));
+        Cursor q = db.getGroupItems(group_id);
+        q.moveToFirst();
+        int item_name_index = q.getColumnIndex("Itemname");
+
+        for(int i = 0; i < q.getCount(); i++){
+            items_mylistdata.add(new MyListData(q.getString(item_name_index), 0, 0,0,0,0));
+            q.moveToNext();
         }
 
         this.adapter = new MyListAdapter(items_mylistdata, true, this);
