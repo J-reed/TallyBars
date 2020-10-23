@@ -19,6 +19,6 @@ Delete items with a swipe to the left.
 Compare items in a list with the built in bar graph and 'balanced' and 'total' modes (where 'Balanced' only shows the relative differences in
 tally counts between items).
 
-<img src="https://github.com/J-reed/TallyBars/blob/master/app/ImagesForReadMe/Screenshot_1603461066.png?raw=true" width="300"><img src="https://github.com/J-reed/TallyBars/blob/master/app/ImagesForReadMe/Screenshot_1603461190.png?raw=true" width="300"><img src="https://github.com/J-reed/TallyBars/blob/master/app/ImagesForReadMe/Screenshot_1603461193.png?raw=true" width="300">
+<img src="https://github.com/J-reed/TallyBars/blob/master/app/ImagesForReadMe/Screenshot_1603461190.png?raw=true" width="300"><img src="https://github.com/J-reed/TallyBars/blob/master/app/ImagesForReadMe/Screenshot_1603461193.png?raw=true" width="300">
 
 
